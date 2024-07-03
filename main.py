@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import List, Tuple
 from PIL import Image
 from PIL.ImageFile import ImageFile
 
@@ -32,7 +32,7 @@ def calculate_collage_size(images: List[ImageFile],
                            images_per_row: int,
                            padding: int,
                            edge_padding_w: int,
-                           edge_padding_h: int) -> Image:
+                           edge_padding_h: int) -> Tuple:
     """
     Функция для вычисления размеров коллажа на основе размеров изображений.
     """
@@ -48,11 +48,7 @@ def calculate_collage_size(images: List[ImageFile],
     collage_height = rows * (max_height + padding) \
         - padding + 2 * edge_padding_h
 
-    collage_image = Image.new('RGB',
-                              (collage_width, collage_height),
-                              (255, 255, 255))
-
-    return collage_image
+    return collage_width, collage_height
 
 
 def save_collage(collage_image: Image.Image,
@@ -83,8 +79,12 @@ def create_image_collage_for_each_folder(base_folder: str,
         if not images:
             logger.error(f"No images found in folder '{folder_name}'")
             continue
-        collage_image = calculate_collage_size(
+        collage_width, collage_height = calculate_collage_size(
             images, images_per_row, padding, edge_padding_w, edge_padding_h)
+
+        collage_image = Image.new('RGB',
+                                  (collage_width, collage_height),
+                                  (255, 255, 255))
 
         max_width = max(image.width for image in images)
         max_height = max(image.height for image in images)
