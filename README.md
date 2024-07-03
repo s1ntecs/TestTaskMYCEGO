@@ -16,9 +16,12 @@
 
 2. Установите необходимые зависимости:
 
-    ```sh
-    pip install -r requirements.txt
-    ```
+```
+python -m venv venv
+source venv/Scripts/activate
+pip install -r requerements.txt
+```
+
 
 3. Запустите скрипт для создания коллажей:
 

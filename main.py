@@ -2,16 +2,17 @@ import os
 from typing import List
 from PIL import Image
 from PIL.ImageFile import ImageFile
-from loguru import logger
+
+from ya_disk import download_folder_from_yandex_disk, logger
 
 
 def get_folder_paths(base_folder: str) -> List:
     """ Функция которая возвращает список путей с папками с фото. """
-    folder_paths = []
-    for folder in os.listdir(base_folder):
-        folder_path = os.path.join(base_folder, folder)
-        if os.path.isdir(folder_path):
-            folder_paths.append(folder_path)
+    folder_paths = [
+        os.path.join(base_folder, folder)
+        for folder in os.listdir(base_folder)
+        if os.path.isdir(os.path.join(base_folder, folder))
+    ]
     return folder_paths
 
 
@@ -72,8 +73,6 @@ def create_image_collage_for_each_folder(base_folder: str,
                                          edge_padding_w: int = 100,
                                          edge_padding_h: int = 200):
     """ Основная функция создания коллажа."""
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder)
 
     folder_paths = get_folder_paths(base_folder)
 
@@ -104,4 +103,14 @@ def create_image_collage_for_each_folder(base_folder: str,
 if __name__ == "__main__":
     base_folder = 'image_folders'
     output_folder = 'collage_results'
-    create_image_collage_for_each_folder(base_folder, output_folder)
+    yandex_disk_link = "https://disk.yandex.ru/d/V47MEP5hZ3U1kg"
+    download_path = "downloaded_files.zip"
+    extracted_folder = download_folder_from_yandex_disk(
+        yandex_disk_link,
+        download_path,
+        base_folder)
+    if extracted_folder:
+        create_image_collage_for_each_folder(
+            extracted_folder, output_folder)
+    else:
+        logger.error("Download failed. Skipping collage creation.")
