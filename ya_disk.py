@@ -26,6 +26,7 @@ def extract_zip(file_path: str,
 
 
 def get_foler_name(url: str):
+    """ Функция возвращает название скачанной папки."""
     parsed_url = urllib.parse.urlparse(url)
     query_params = urllib.parse.parse_qs(parsed_url.query)
     encoded_filename = query_params.get('filename', [None])[0]
